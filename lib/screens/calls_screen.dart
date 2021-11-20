@@ -3,23 +3,23 @@ import 'package:whatsapp/models/call_details.dart';
 
 final List<CallDetails> callDetails = [
   CallDetails(
-    name: 'Hari ki Bandi',
-    time: 'Yesterday, 07:20 PM',
+    name: 'Person 1',
+    time: 'Yesterday, 01:20 PM',
     profilePic: '',
   ),
   CallDetails(
-    name: 'Tanmay ki Bandi',
-    time: 'Yesterday, 07:20 PM',
+    name: 'Person 2',
+    time: 'Yesterday, 02:20 PM',
     profilePic: '',
   ),
   CallDetails(
-    name: 'Tanmay ki Bandi',
-    time: 'Yesterday, 07:20 PM',
+    name: 'Person 3',
+    time: 'Yesterday, 03:20 PM',
     profilePic: '',
   ),
   CallDetails(
-    name: 'Hari ki Bandi',
-    time: 'Yesterday, 07:20 PM',
+    name: 'Person 4',
+    time: 'Yesterday, 04:20 PM',
     profilePic: '',
   ),
 ];

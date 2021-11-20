@@ -3,22 +3,22 @@ import 'package:whatsapp/models/status_details.dart';
 
 final List<StatusDetails> statusDetails = [
   StatusDetails(
-    name: 'Hari ki Bandi',
+    name: 'Person 1',
     time: 'Yesterday, 07:20 PM',
     profilePic: '',
   ),
   StatusDetails(
-    name: 'Tanmay ki Bandi',
+    name: 'Person 2',
     time: 'Yesterday, 07:20 PM',
     profilePic: '',
   ),
   StatusDetails(
-    name: 'Tanmay ki Bandi',
+    name: 'Person 3',
     time: 'Yesterday, 07:20 PM',
     profilePic: '',
   ),
   StatusDetails(
-    name: 'Hari ki Bandi',
+    name: 'Person 4',
     time: 'Yesterday, 07:20 PM',
     profilePic: '',
   ),

@@ -3,26 +3,26 @@ import 'package:whatsapp/models/user_details.dart';
 
 final List<UserDetails> userDetails = [
   UserDetails(
-    name: 'Tanmay ki Bandi 2',
+    name: 'Person 1',
     message: 'hi',
     time: 'time',
     profilePic: '',
   ),
   UserDetails(
-    name: 'Hari',
+    name: 'Person 2',
     message: 'hi',
     time: 'time',
     profilePic: '',
   ),
   UserDetails(
-    name: 'Tanmay ki Bandi',
+    name: 'Person 3',
     message: 'hi',
     time: 'time',
     profilePic: '',
   ),
   UserDetails(
-    name: 'Hari ki Bandi',
-    message: 'I love you',
+    name: 'Person 4',
+    message: 'hi',
     time: 'time',
     profilePic: '',
   ),
