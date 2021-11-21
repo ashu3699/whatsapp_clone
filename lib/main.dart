@@ -6,15 +6,15 @@ import 'package:whatsapp/services/navigator.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final cameras = await availableCameras();
+  List<CameraDescription> allCameras = await availableCameras();
 
-  final firstCamera = cameras.first;
-  runApp(MyApp(camera: firstCamera));
+  // final firstCamera = cameras.first;
+  runApp(MyApp(allCameras: allCameras));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key, required this.camera}) : super(key: key);
-  final CameraDescription camera;
+  const MyApp({Key? key, required this.allCameras}) : super(key: key);
+  final List<CameraDescription> allCameras;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.teal,
       ),
       // initialRoute: '/home',
-      home: HomePage(camera: camera),
+      home: HomePage(allCameras: allCameras),
       onGenerateRoute: RouteGenerator.generateRoute,
       debugShowCheckedModeBanner: false,
     );
