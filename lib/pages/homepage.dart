@@ -9,8 +9,8 @@ import 'package:whatsapp/screens/chats_screen.dart';
 import 'package:whatsapp/screens/status_screen.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key, required this.allCameras}) : super(key: key);
-  final List<CameraDescription> allCameras;
+  const HomePage({Key? key, required this.cameras}) : super(key: key);
+  final List<CameraDescription> cameras;
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return _selectedIndex == 0
-        ? CameraScreen(allCameras: widget.allCameras)
+        ? CameraScreen(cameras: widget.cameras)
         : Scaffold(
             appBar: AppBar(
               title: const Text(

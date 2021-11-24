@@ -3,51 +3,48 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:whatsapp/screens/display_picture_screen.dart';
 
 class CameraScreen extends StatefulWidget {
-  const CameraScreen({Key? key, required this.allCameras}) : super(key: key);
-  final List<CameraDescription> allCameras;
+  const CameraScreen({Key? key, required this.cameras}) : super(key: key);
+  final List<CameraDescription> cameras;
   @override
   _CameraScreenState createState() => _CameraScreenState();
 }
 
 class _CameraScreenState extends State<CameraScreen> {
+  //for slideUpPanel
   late PanelController _pc = PanelController();
-  late CameraController _controller1;
-  late CameraController _controller2;
-  late CameraController _controller = _controller1;
-  late Future<void> _initializeControllerFuture;
-  late final frontCamera = widget.allCameras[1];
-  late final rearCamera = widget.allCameras.first;
   late double _panelMargin = 130;
-  late Color _panelColor = Colors.amber;
+  late Color _panelColor = Colors.transparent;
+
+  //for camera
+  late CameraController _controller;
+  late Future<void> _initializeControllerFuture;
+  int selectedCamera = 0;
+  List<File> capturedImages = [];
+
+  initializeCamera(int cameraIndex) async {
+    _controller = CameraController(
+      widget.cameras[cameraIndex],
+      ResolutionPreset.max,
+    );
+
+    _initializeControllerFuture = _controller.initialize();
+  }
+
   @override
   void initState() {
-    // Future.delayed(const Duration(milliseconds: 0), () {
-    //   _pc.animatePanelToPosition(0.4);
-    // });
-
-    super.initState();
-    // _fabHeight = _initFabHeight;
     _pc = PanelController();
-    _controller1 = CameraController(frontCamera, ResolutionPreset.max);
-    _controller2 = CameraController(rearCamera, ResolutionPreset.max);
-    _initializeControllerFuture = _controller1.initialize();
-    // _initializeControllerFuture = _controller2.initialize();
+    initializeCamera(selectedCamera);
+    super.initState();
   }
 
   @override
   void dispose() {
-    _controller1.dispose();
-    // _controller2.dispose();
+    _controller.dispose();
     super.dispose();
   }
-
-  // final double _initFabHeight = 100.0;
-  // double _fabHeight = 0;
-  // double _panelHeightOpen = 0;
-  // final double _panelHeightClosed = 100;
-  // Color _panelColor = Colors.transparent;
 
   Widget _cameraButtons() {
     return Column(
@@ -69,31 +66,66 @@ class _CameraScreenState extends State<CameraScreen> {
                 ),
               ),
             ),
-            SizedBox(
-              height: 100,
-              width: 100,
-              child: IconButton(
-                alignment: Alignment.topCenter,
-                onPressed: () async {
-                  try {
-                    await _initializeControllerFuture;
-                    final image = await _controller.takePicture();
-
-                    await Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => DisplayPictureScreen(
-                          imagePath: image.path,
-                        ),
+            // SizedBox(
+            //   height: 100,
+            //   width: 100,
+            //   child: IconButton(
+            //     alignment: Alignment.topCenter,
+            //     onPressed: () async {
+            //       try {
+            //         await _initializeControllerFuture;
+            //         final image = await _controller.takePicture();
+            //         setState(() {
+            //           capturedImages.add(File(image.path));
+            //         });
+            //       } catch (e) {
+            //         //
+            //       }
+            // final image = await _controller.takePicture();
+            // await Navigator.of(context).push(
+            //   MaterialPageRoute(
+            //     builder: (context) => DisplayPictureScreen(
+            //       imagePath: image.path,
+            //     ),
+            //   ),
+            // );
+            //     },
+            //     icon: const Icon(
+            //       Icons.panorama_fish_eye,
+            //       color: Colors.white,
+            //       size: 85,
+            //     ),
+            //   ),
+            // ),
+            GestureDetector(
+              onTap: () async {
+                try {
+                  await _initializeControllerFuture;
+                  final image = await _controller.takePicture();
+                  setState(() {
+                    capturedImages.add(File(image.path));
+                  });
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => DisplayPictureScreen(
+                        imagePath: image.path,
                       ),
-                    );
-                  } catch (e) {
-                    // print(e);
-                  }
-                },
-                icon: const Icon(
-                  Icons.panorama_fish_eye,
-                  color: Colors.white,
-                  size: 85,
+                    ),
+                  );
+                } catch (e) {
+                  //
+                }
+              },
+              child: Container(
+                height: 75,
+                width: 75,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(100),
+                  border: Border.all(
+                    width: 3,
+                    color: Colors.white,
+                    style: BorderStyle.solid,
+                  ),
                 ),
               ),
             ),
@@ -102,13 +134,18 @@ class _CameraScreenState extends State<CameraScreen> {
               width: 100,
               child: IconButton(
                 onPressed: () {
-                  setState(() {
-                    if (_controller == _controller1) {
-                      _controller = _controller2;
-                    } else {
-                      _controller = _controller1;
-                    }
-                  });
+                  if (widget.cameras.length > 1) {
+                    setState(() {
+                      selectedCamera =
+                          selectedCamera == 0 ? 1 : 0; //Switch camera
+                      initializeCamera(selectedCamera);
+                    });
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('No secondary camera found'),
+                      duration: Duration(seconds: 2),
+                    ));
+                  }
                 },
                 icon: const Icon(
                   Icons.flip_camera_ios,
@@ -128,27 +165,82 @@ class _CameraScreenState extends State<CameraScreen> {
     );
   }
 
+  Widget _noPanel(ScrollController sc) {
+    return Container();
+  }
+
   Widget _panel(ScrollController sc) {
-    return GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4,
+    List<File> reversedImages = capturedImages.reversed.toList();
+    return Scaffold(
+      appBar: AppBar(
+        shadowColor: Colors.transparent,
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          color: Colors.grey,
+          onPressed: () {
+            _pc.close();
+          },
         ),
-        itemCount: 120,
-        itemBuilder: (BuildContext context, int index) {
-          return Card(
-            color: _panelColor,
-            child: Center(child: Text('$index')),
-          );
-        });
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.check_box_outlined),
+            color: Colors.grey,
+            onPressed: () {},
+          )
+        ],
+        bottom: PreferredSize(
+            child: Container(
+              padding: const EdgeInsets.all(15),
+              alignment: Alignment.topLeft,
+              child: Text(
+                "RECENT",
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey.shade600),
+              ),
+            ),
+            preferredSize: const Size.fromHeight(30)),
+      ),
+      body: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+          ),
+          itemCount: reversedImages.length,
+          itemBuilder: (BuildContext context, int index) {
+            return GestureDetector(
+              onTap: () async {
+                await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => DisplayPictureScreen(
+                      imagePath: reversedImages[index].path,
+                    ),
+                  ),
+                );
+              },
+              child: Container(
+                height: 60,
+                width: 60,
+                decoration: BoxDecoration(
+                    color: _panelColor,
+                    border: Border.all(color: Colors.white),
+                    image: reversedImages.isNotEmpty
+                        ? DecorationImage(
+                            image: FileImage(reversedImages[index]),
+                            fit: BoxFit.cover)
+                        : null),
+              ),
+            );
+          }),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    const double _panelHeightClosed = 70;
+    const double _panelHeightClosed = 80;
     double _panelHeightOpen = MediaQuery.of(context).size.height;
 
-    // final PanelController _pc = PanelController();
-    // _pc.isAttached =true;
     return Scaffold(
       body: FutureBuilder<void>(
         future: _initializeControllerFuture,
@@ -173,19 +265,20 @@ class _CameraScreenState extends State<CameraScreen> {
                       minHeight: _panelHeightClosed,
                       parallaxEnabled: true,
                       parallaxOffset: .5,
-                      panelBuilder: (sc) => _panel(sc),
+                      panelBuilder: (sc) =>
+                          _panelMargin == 0 ? _panel(sc) : _noPanel(sc),
                       margin: EdgeInsets.only(bottom: _panelMargin),
                       collapsed: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: 25,
                         itemBuilder: (BuildContext context, int index) {
                           return Container(
-                            padding: const EdgeInsets.only(right: 5),
+                            padding: const EdgeInsets.only(right: 3.5),
                             child: const Image(
                               image: AssetImage('lib/assets/6.jpg'),
                               fit: BoxFit.cover,
-                              height: 70,
-                              width: 70,
+                              height: 80,
+                              width: 80,
                             ),
                           );
                         },
@@ -204,25 +297,11 @@ class _CameraScreenState extends State<CameraScreen> {
               ),
             );
           } else {
+            //until camera is initialized
             return const Center(child: CircularProgressIndicator());
           }
         },
       ),
-    );
-  }
-}
-
-class DisplayPictureScreen extends StatelessWidget {
-  final String imagePath;
-
-  const DisplayPictureScreen({Key? key, required this.imagePath})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Display the Picture')),
-      body: Image.file(File(imagePath)),
     );
   }
 }
