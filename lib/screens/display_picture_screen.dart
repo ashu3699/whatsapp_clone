@@ -14,8 +14,12 @@ class DisplayPictureScreen extends StatefulWidget {
 class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
   //for slideUpPanel
   final PanelController _panelController = PanelController();
-  // late double _panelMargin = 130;
-  // late Color _panelColor = Colors.transparent;
+  double _panelMargin = 100;
+  Color _panelColor = Colors.transparent;
+
+  Widget _noPanel(ScrollController sc) {
+    return Container();
+  }
 
   Widget _panel(ScrollController _sc) {
     return ListView.builder(
@@ -39,6 +43,7 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        shadowColor: Colors.transparent,
         backgroundColor: Colors.black,
         leading: IconButton(
           onPressed: () {
@@ -49,64 +54,102 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
         actions: [
           IconButton(
               onPressed: () {}, icon: const Icon(Icons.crop_rotate_rounded)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.emoji_emotions)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.text_fields)),
+          IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.sentiment_satisfied_alt)),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.title_rounded)),
           IconButton(onPressed: () {}, icon: const Icon(Icons.edit_outlined)),
         ],
       ),
-      body: SlidingUpPanel(
-        controller: _panelController,
-        renderPanelSheet: false,
-        // backdropEnabled: true,
-        // backdropColor: Colors.white,
-        // backdropOpacity: 1,
-        maxHeight: 100,
-        minHeight: 10,
-        parallaxEnabled: true,
-        parallaxOffset: .5,
-        panelBuilder: (_sc) => _panel(_sc),
-        // margin: EdgeInsets.only(bottom: _panelMargin),
-        body: Stack(
-          // alignment: Alignment.bottomLeft,
+      body: Container(
+        color: Colors.black,
+        child: Stack(
           children: [
             Image.file(File(widget.imagePath)),
-            Container(
-              // alignment: Alignment.bottomLeft,
-              width: MediaQuery.of(context).size.width - 50,
-              height: 50,
-              child: const TextField(),
-              color: Colors.red,
+            OverflowBox(
+              child: SlidingUpPanel(
+                controller: _panelController,
+                renderPanelSheet: false,
+                // backdropEnabled: true,
+                // backdropColor: Colors.white,
+                // backdropOpacity: 1,
+                maxHeight: 100,
+                minHeight: 100,
+                parallaxEnabled: true,
+                parallaxOffset: .5,
+                panelBuilder: (_sc) =>
+                    _panelMargin == 0 ? _panel(_sc) : _noPanel(_sc),
+                margin: EdgeInsets.only(bottom: _panelMargin),
+                collapsed: Column(
+                  children: const [
+                    Icon(
+                      Icons.keyboard_arrow_up,
+                      color: Colors.white,
+                    ),
+                    Text(
+                      'Filters',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+                onPanelOpened: () => setState(() {
+                  _panelMargin = 0;
+                  _panelColor = Colors.amber;
+                }),
+                onPanelClosed: () => setState(() {
+                  _panelMargin = 100;
+                  _panelColor = Colors.transparent;
+                }),
+              ),
             ),
-            IconButton(
-              iconSize: 50,
-              onPressed: () {},
-              icon: const Icon(
-                Icons.check_circle_rounded,
-                color: Colors.teal,
+            //bottombar
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width - 60,
+                    child: Card(
+                      margin:
+                          const EdgeInsets.only(left: 2, right: 2, bottom: 8),
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25)),
+                      child: TextFormField(
+                        textAlignVertical: TextAlignVertical.center,
+                        keyboardType: TextInputType.multiline,
+                        maxLines: 5,
+                        minLines: 1,
+                        decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            hintText: "Add a caption...",
+                            hintStyle: TextStyle(color: Colors.grey),
+                            prefixIcon: Icon(Icons.photo_library_outlined),
+                            suffixIcon: Icon(Icons.update_disabled_outlined)),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 2, right: 2, bottom: 8),
+                    child: CircleAvatar(
+                      radius: 25,
+                      child: IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.check,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
         ),
       ),
-
-      // body: Stack(
-      //   children: [
-      //     Image.file(File(imagePath)),
-      //     Container(
-      //       width: 100,
-      //       child: const TextField(),
-      //       color: Colors.red,
-      //     ),
-      //     IconButton(
-      //       iconSize: 50,
-      //       onPressed: () {},
-      //       icon: const Icon(
-      //         Icons.check_circle_rounded,
-      //         color: Colors.teal,
-      //       ),
-      //     ),
-      //   ],
-      // ),
     );
   }
 }
