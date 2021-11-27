@@ -12,10 +12,39 @@ class DisplayPictureScreen extends StatefulWidget {
 }
 
 class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
+  final _message = TextEditingController();
+  // bool _show = true;
   //for slideUpPanel
   final PanelController _panelController = PanelController();
-  double _panelMargin = 100;
-  Color _panelColor = Colors.transparent;
+  double _panelMargin = 40;
+  /*
+  Widget _showBottomSheet() {
+    return _show
+        ? BottomSheet(
+            onClosing: () {},
+            builder: (context) {
+              return Container(
+                height: 200,
+                width: double.infinity,
+                color: Colors.grey.shade200,
+                alignment: Alignment.center,
+                child: ElevatedButton(
+                  child: const Text("Close Bottom Sheet"),
+                  style: ElevatedButton.styleFrom(
+                    onPrimary: Colors.white,
+                    primary: Colors.green,
+                  ),
+                  onPressed: () {
+                    _show = false;
+                    setState(() {});
+                  },
+                ),
+              );
+            },
+          )
+        : const SizedBox.shrink();
+  }
+*/
 
   Widget _noPanel(ScrollController sc) {
     return Container();
@@ -23,13 +52,15 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
 
   Widget _panel(ScrollController _sc) {
     return ListView.builder(
+      controller: _sc,
       scrollDirection: Axis.horizontal,
-      itemCount: 25,
+      itemCount: 6,
       itemBuilder: (BuildContext context, int index) {
         return Container(
           padding: const EdgeInsets.only(right: 3.5),
+          margin: const EdgeInsets.only(bottom: 100),
           child: const Image(
-            image: AssetImage('lib/assets/6.jpg'),
+            image: AssetImage('lib/assets/8.jpg'),
             fit: BoxFit.cover,
             height: 80,
             width: 80,
@@ -42,6 +73,7 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // resizeToAvoidBottomInset: false,
       appBar: AppBar(
         shadowColor: Colors.transparent,
         backgroundColor: Colors.black,
@@ -61,19 +93,29 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
           IconButton(onPressed: () {}, icon: const Icon(Icons.edit_outlined)),
         ],
       ),
+      // bottomSheet: _showBottomSheet(),
       body: Container(
+        // width: MediaQuery.of(context).size.width,
+        // height: MediaQuery.of(context).size.height,
         color: Colors.black,
         child: Stack(
           children: [
-            Image.file(File(widget.imagePath)),
+            Center(
+              child: Image.file(
+                File(widget.imagePath),
+                // height: MediaQuery.of(context).size.height - _panelMargin,
+              ),
+            ),
             OverflowBox(
+              // maxWidth: MediaQuery.of(context).size.width,
+              // maxHeight: MediaQuery.of(context).size.height,
               child: SlidingUpPanel(
                 controller: _panelController,
                 renderPanelSheet: false,
                 // backdropEnabled: true,
                 // backdropColor: Colors.white,
                 // backdropOpacity: 1,
-                maxHeight: 100,
+                maxHeight: 200,
                 minHeight: 100,
                 parallaxEnabled: true,
                 parallaxOffset: .5,
@@ -94,11 +136,11 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
                 ),
                 onPanelOpened: () => setState(() {
                   _panelMargin = 0;
-                  _panelColor = Colors.amber;
+                  // _panelColor = Colors.amber.withOpacity(0);
                 }),
                 onPanelClosed: () => setState(() {
-                  _panelMargin = 100;
-                  _panelColor = Colors.transparent;
+                  _panelMargin = 40;
+                  // _panelColor = Colors.transparent;
                 }),
               ),
             ),
@@ -116,17 +158,23 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
                       color: Colors.white,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25)),
-                      child: TextFormField(
+                      child: TextField(
+                        // scrollController: ScrollController(),
+                        // scrollPhysics: NeverScrollableScrollPhysics(),
+                        // maxLength: null,
+                        // autofocus: true,
+                        controller: _message,
                         textAlignVertical: TextAlignVertical.center,
                         keyboardType: TextInputType.multiline,
-                        maxLines: 5,
-                        minLines: 1,
+                        maxLines: null,
+                        // minLines: 1,
                         decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "Add a caption...",
-                            hintStyle: TextStyle(color: Colors.grey),
-                            prefixIcon: Icon(Icons.photo_library_outlined),
-                            suffixIcon: Icon(Icons.update_disabled_outlined)),
+                          border: InputBorder.none,
+                          hintText: "Add a caption...",
+                          hintStyle: TextStyle(color: Colors.grey),
+                          prefixIcon: Icon(Icons.photo_library_outlined),
+                          suffixIcon: Icon(Icons.update_disabled_outlined),
+                        ),
                       ),
                     ),
                   ),

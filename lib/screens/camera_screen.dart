@@ -19,6 +19,10 @@ class _CameraScreenState extends State<CameraScreen> {
   late Color _panelColor = Colors.transparent;
 
   //for camera
+  late FlashMode _currentFlashMode = FlashMode.off;
+  late IconData _flashIcon = Icons.flash_off;
+  late int _flashCount = 0;
+
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
   int selectedCamera = 0;
@@ -31,6 +35,7 @@ class _CameraScreenState extends State<CameraScreen> {
     );
 
     _initializeControllerFuture = _controller.initialize();
+    _currentFlashMode = FlashMode.off;
   }
 
   @override
@@ -58,45 +63,41 @@ class _CameraScreenState extends State<CameraScreen> {
               height: 100,
               width: 100,
               child: IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.flash_off,
+                onPressed: () async {
+                  _flashCount++;
+                  try {
+                    if (_flashCount % 3 == 0) {
+                      setState(() {
+                        _currentFlashMode = FlashMode.torch;
+                        _flashIcon = Icons.flash_on;
+                      });
+                      await _controller.setFlashMode(FlashMode.always);
+                    } else if (_flashCount % 3 == 1) {
+                      setState(() {
+                        _currentFlashMode = FlashMode.auto;
+                        _flashIcon = Icons.flash_auto;
+                      });
+                      await _controller.setFlashMode(FlashMode.auto);
+                    } else if (_flashCount % 3 == 2) {
+                      setState(() {
+                        _currentFlashMode = FlashMode.off;
+                        _flashIcon = Icons.flash_off;
+                      });
+                      await _controller.setFlashMode(
+                        FlashMode.off,
+                      );
+                    }
+                  } catch (e) {
+                    //
+                  }
+                },
+                icon: Icon(
+                  _flashIcon,
                   color: Colors.white,
                   size: 30,
                 ),
               ),
             ),
-            // SizedBox(
-            //   height: 100,
-            //   width: 100,
-            //   child: IconButton(
-            //     alignment: Alignment.topCenter,
-            //     onPressed: () async {
-            //       try {
-            //         await _initializeControllerFuture;
-            //         final image = await _controller.takePicture();
-            //         setState(() {
-            //           capturedImages.add(File(image.path));
-            //         });
-            //       } catch (e) {
-            //         //
-            //       }
-            // final image = await _controller.takePicture();
-            // await Navigator.of(context).push(
-            //   MaterialPageRoute(
-            //     builder: (context) => DisplayPictureScreen(
-            //       imagePath: image.path,
-            //     ),
-            //   ),
-            // );
-            //     },
-            //     icon: const Icon(
-            //       Icons.panorama_fish_eye,
-            //       color: Colors.white,
-            //       size: 85,
-            //     ),
-            //   ),
-            // ),
             GestureDetector(
               onTap: () async {
                 try {
@@ -113,7 +114,7 @@ class _CameraScreenState extends State<CameraScreen> {
                     ),
                   );
                 } catch (e) {
-                  //
+                  //to handle camera exceptions
                 }
               },
               child: Container(
@@ -204,6 +205,7 @@ class _CameraScreenState extends State<CameraScreen> {
             preferredSize: const Size.fromHeight(30)),
       ),
       body: GridView.builder(
+          controller: sc,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
           ),
@@ -299,6 +301,7 @@ class _CameraScreenState extends State<CameraScreen> {
           } else {
             //until camera is initialized
             return const Center(child: CircularProgressIndicator());
+            // return SizedBox.shrink();
           }
         },
       ),
