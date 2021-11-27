@@ -19,9 +19,9 @@ class _CameraScreenState extends State<CameraScreen> {
   late Color _panelColor = Colors.transparent;
 
   //for camera
-  late FlashMode _currentFlashMode = FlashMode.off;
-  late IconData _flashIcon = Icons.flash_off;
-  late int _flashCount = 0;
+  late FlashMode _currentFlashMode;
+  late IconData _flashIcon = Icons.flash_auto;
+  late int _flashCount = 1;
 
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
@@ -35,7 +35,7 @@ class _CameraScreenState extends State<CameraScreen> {
     );
 
     _initializeControllerFuture = _controller.initialize();
-    _currentFlashMode = FlashMode.off;
+    _currentFlashMode = FlashMode.auto;
   }
 
   @override
@@ -66,7 +66,7 @@ class _CameraScreenState extends State<CameraScreen> {
                 onPressed: () async {
                   _flashCount++;
                   try {
-                    if (_flashCount % 3 == 0) {
+                    if (_flashCount % 3 == 2) {
                       setState(() {
                         _currentFlashMode = FlashMode.torch;
                         _flashIcon = Icons.flash_on;
@@ -78,7 +78,7 @@ class _CameraScreenState extends State<CameraScreen> {
                         _flashIcon = Icons.flash_auto;
                       });
                       await _controller.setFlashMode(FlashMode.auto);
-                    } else if (_flashCount % 3 == 2) {
+                    } else if (_flashCount % 3 == 0) {
                       setState(() {
                         _currentFlashMode = FlashMode.off;
                         _flashIcon = Icons.flash_off;
@@ -88,7 +88,7 @@ class _CameraScreenState extends State<CameraScreen> {
                       );
                     }
                   } catch (e) {
-                    //
+                    //if flash is not present in the device (or like front camera)
                   }
                 },
                 icon: Icon(
@@ -287,7 +287,7 @@ class _CameraScreenState extends State<CameraScreen> {
                       ),
                       onPanelOpened: () => setState(() {
                         _panelMargin = 0;
-                        _panelColor = Colors.amber;
+                        _panelColor = Colors.blueGrey;
                       }),
                       onPanelClosed: () => setState(() {
                         _panelMargin = 130;
