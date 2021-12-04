@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "124959325728",
+    "project_id": "whatsapp-clone-a33bb",
+    "storage_bucket": "whatsapp-clone-a33bb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:124959325728:android:c798f8e9690ff145220645",
+        "android_client_info": {
+          "package_name": "com.heydude.whatsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "124959325728-hrjlth7nhe8obdhp41hhbdvr3dt98163.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSol4ybO8hgFWRftboE5DLpaA_mOVrnxc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "124959325728-hrjlth7nhe8obdhp41hhbdvr3dt98163.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

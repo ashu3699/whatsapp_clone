@@ -105,7 +105,7 @@ class SettingsPage extends StatelessWidget {
             const Padding(padding: EdgeInsets.all(15)),
             const Text('from'),
             const Padding(padding: EdgeInsets.all(3)),
-            const Text('HEY DUDES')
+            const Text('HEY DUDE')
           ],
         ),
       ),
