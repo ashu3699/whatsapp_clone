@@ -1,14 +1,14 @@
 import 'package:camera/camera.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:whatsapp/pages/homepage.dart';
 import 'package:whatsapp/services/navigator.dart';
+import 'package:whatsapp/wrapper.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await Firebase.initializeApp();
+  WidgetsFlutterBinding.ensureInitialized();
   List<CameraDescription> cameras = await availableCameras();
-
-  // final firstCamera = cameras.first;
   runApp(MyApp(cameras: cameras));
 }
 
@@ -22,8 +22,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.teal,
       ),
-      // initialRoute: '/home',
-      home: HomePage(cameras: cameras),
+      // home: HomePage(cameras: cameras),
+      home: Wrapper(cameras: cameras),
       onGenerateRoute: RouteGenerator.generateRoute,
       debugShowCheckedModeBanner: false,
     );
