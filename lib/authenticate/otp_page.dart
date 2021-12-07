@@ -1,29 +1,34 @@
+import 'package:camera/camera.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:whatsapp/pages/homepage.dart';
 import 'package:whatsapp/services/auth.dart';
 
 class OtpPage extends StatefulWidget {
   const OtpPage({
     Key? key,
     required this.phoneNo,
-    // required this.vid,
     required this.auth,
+    required this.cameras,
   }) : super(key: key);
   final String phoneNo;
-  // final String vid;
+  final List<CameraDescription> cameras;
   final AuthService auth;
+
   @override
   _OtpPageState createState() => _OtpPageState();
 }
 
 class _OtpPageState extends State<OtpPage> {
-  // final AuthService _auth = AuthService();
   final _otpController = TextEditingController();
+  late UserCredential authCredential;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         foregroundColor: Colors.teal,
         backgroundColor: Colors.white,
         shadowColor: Colors.transparent,
@@ -96,11 +101,20 @@ class _OtpPageState extends State<OtpPage> {
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
-                  child: const Text('VERIFY OTP'),
-                  onPressed: () async {
-                    await widget.auth.verifyOTP(_otpController.text);
-                  },
-                )
+                    child: const Text('VERIFY OTP'),
+                    onPressed: () async {
+                      authCredential =
+                          await widget.auth.verifyOTP(_otpController.text);
+                      if (authCredential.user != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                HomePage(cameras: widget.cameras),
+                          ),
+                        );
+                      }
+                    })
               ],
             ),
           ),

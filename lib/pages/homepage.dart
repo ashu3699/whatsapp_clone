@@ -53,6 +53,7 @@ class _HomePageState extends State<HomePage>
         ? CameraScreen(cameras: widget.cameras)
         : Scaffold(
             appBar: AppBar(
+              automaticallyImplyLeading: false,
               title: const Text(
                 "WhatsApp",
                 style: TextStyle(
